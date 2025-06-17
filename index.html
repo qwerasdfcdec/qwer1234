@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>인터랙티브 스토리텔링</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff8f0;
+      color: #333;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    #story {
+      font-size: 18px;
+      margin-bottom: 30px;
+      min-height: 140px;
+    }
+    .choice {
+      background-color: #3498db;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      margin: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-block;
+      min-width: 160px;
+    }
+    .choice:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌲 인터랙티브 스토리텔링 🌲</h1>
+  <div id="story"></div>
+  <div id="choices"></div>
+
+  <script>
+    const storyData = {
+      start: {
+        text: "어느 날, 당신은 숲속에서 길을 잃었습니다. 어디로 가시겠습니까?",
+        choices: [
+          { text: "🌞 오른쪽 길", next: "rightPath" },
+          { text: "🌲 왼쪽 길", next: "leftPath" }
+        ]
+      },
+      rightPath: {
+        text: "오른쪽 길을 따라가니 해가 비추는 들판과 따뜻한 마을이 보입니다. 마을에 들어가시겠습니까?",
+        choices: [
+          { text: "🏘️ 마을에 들어간다", next: "peaceVillage" },
+          { text: "🌸 들판 너머로 간다", next: "flowerField" }
+        ]
+      },
+      leftPath: {
+        text: "왼쪽 길은 나뭇잎이 흔들리고 그림자가 요동치는 으스스한 숲으로 이어집니다. 계속 가시겠습니까?",
+        choices: [
+          { text: "👻 계속 간다", next: "hauntedForest" },
+          { text: "↩️ 오른쪽으로 돌아간다", next: "rightPath" }
+        ]
+      },
+      peaceVillage: {
+        text: "마을 사람들은 당신에게 친절하게 인사합니다. 작은 축제가 열리고 있군요. 무엇을 하시겠습니까?",
+        choices: [
+          { text: "🎉 축제 참여", next: "festival" },
+          { text: "🌳 마을 외곽 탐험", next: "villageEdge" }
+        ]
+      },
+      flowerField: {
+        text: "들판에는 꽃들이 만발해 있고, 멀리 무지개가 보입니다. 아름다운 풍경을 감상하며 잠시 쉬기로 합니다.",
+        choices: []
+      },
+      festival: {
+        text: "축제에서 다양한 음식을 맛보고, 음악에 맞춰 춤을 춥니다. 좋은 추억이 생겼습니다. 엔딩: 평화로운 기억.",
+        choices: []
+      },
+      villageEdge: {
+        text: "마을 끝자락에서 신비한 나무 문을 발견합니다. 열어볼까요?",
+        choices: [
+          { text: "🚪 문을 연다", next: "treePortal" },
+          { text: "🏘️ 마을로 돌아간다", next: "peaceVillage" }
+        ]
+      },
+      treePortal: {
+        text: "문을 열자 마법의 공간으로 연결된 포털이 나타났습니다. 새로운 모험의 시작입니다. 엔딩: 차원의 여행자.",
+        choices: []
+      },
+      hauntedForest: {
+        text: "짙은 안개가 자욱하고, 이상한 속삭임이 들립니다. 계속 깊이 들어가시겠습니까?",
+        choices: [
+          { text: "🔮 더 깊이 들어간다", next: "witchHut" },
+          { text: "🏃 돌아간다", next: "start" }
+        ]
+      },
+      witchHut: {
+        text: "낡은 오두막이 보이고, 안에는 마녀가 앉아 있습니다. 말을 걸어볼까요?",
+        choices: [
+          { text: "🧙 마녀와 대화", next: "witchTalk" },
+          { text: "🚪 몰래 도망친다", next: "forestEscape" }
+        ]
+      },
+      witchTalk: {
+        text: "마녀는 저주를 풀어주는 대신 퀴즈를 냅니다. 정답을 맞히시겠습니까?",
+        choices: [
+          { text: "🧠 퀴즈 도전", next: "quizChallenge" },
+          { text: "😨 거절하고 도망간다", next: "forestEscape" }
+        ]
+      },
+      quizChallenge: {
+        text: "퀴즈에 성공했습니다! 마녀는 저주를 풀고, 마법의 열쇠를 줍니다. 엔딩: 저주를 푼 영웅.",
+        choices: []
+      },
+      forestEscape: {
+        text: "숲에서 빠져나와 원래의 갈림길로 돌아왔습니다.",
+        choices: [
+          { text: "🌞 오른쪽 길로", next: "rightPath" },
+          { text: "🏘️ 마을로 향한다", next: "peaceVillage" }
+        ]
+      }
+    };
+
+    const storyEl = document.getElementById('story');
+    const choicesEl = document.getElementById('choices');
+
+    function showStory(nodeKey) {
+      const node = storyData[nodeKey];
+      storyEl.textContent = node.text;
+      choicesEl.innerHTML = '';
+
+      if (!node.choices || node.choices.length === 0) {
+        const endMessage = document.createElement('p');
+        endMessage.textContent = "🌟 모험이 끝났습니다. 새로 시작하려면 아래 버튼을 눌러주세요.";
+        choicesEl.appendChild(endMessage);
+
+        const restartBtn = document.createElement('button');
+        restartBtn.textContent = "🔁 처음부터 다시 시작";
+        restartBtn.className = 'choice';
+        restartBtn.onclick = () => showStory('start');
+        choicesEl.appendChild(restartBtn);
+        return;
+      }
+
+      node.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.textContent = choice.text;
+        btn.className = 'choice';
+        btn.onclick = () => showStory(choice.next);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    showStory('start');
+  </script>
+
+</body>
+</html>
